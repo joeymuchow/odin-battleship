@@ -14,11 +14,18 @@ const gameboardFactory = () => {
         [[],[],[],[],[],[],[],[],[],[],],
     ]
 
+    const shipsLog = []
+    const shots = {
+        hits: [],
+        misses: []
+    }
+
     const placeShip = (name, size, x, y, vertical = false) => {
         if (vertical && (y + (size - 1)) > 9) throw new Error("Out of bounds exception")
         if (!vertical && (x + (size - 1)) > 9) throw new Error("Out of bounds exception")
 
         const ship = shipFactory(name, size)
+        shipsLog.push(ship)
         for (let i = 0; i < size; i++) {
             if (vertical) {
                 board[y + i][x] = ship.name()
@@ -28,9 +35,28 @@ const gameboardFactory = () => {
         }
     }
 
+    const receiveAttack = (x, y) => {
+        if (x > board.length - 1 || y > board.length - 1) throw new Error("Out of bounds exception")
+
+        if (board[y][x].length) {
+            const name = board[y][x]
+            const hitShip = shipsLog.filter((ship) => {
+                return ship.name() === name
+            })
+
+            hitShip[0].hit()
+            shots.hits.push({x, y})
+        } else {
+            shots.misses.push({x, y})
+        }
+    }
+
     return {
         board,
-        placeShip
+        shipsLog,
+        shots,
+        placeShip,
+        receiveAttack
     }
 }
 
