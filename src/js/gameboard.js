@@ -46,17 +46,28 @@ const gameboardFactory = () => {
 
             hitShip[0].hit()
             shots.hits.push({x, y})
+            return "hit"
         } else {
             shots.misses.push({x, y})
+            return "miss"
         }
+    }
+
+    const allShipsSunk = () => {
+        let shipsSunk = 0
+        for (const ship of shipsLog) {
+            if (ship.isSunk()) shipsSunk += 1
+        }
+
+        return shipsSunk === shipsLog.length
     }
 
     return {
         board,
-        shipsLog,
         shots,
         placeShip,
-        receiveAttack
+        receiveAttack,
+        allShipsSunk
     }
 }
 
