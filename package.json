@@ -4,7 +4,10 @@
   "description": "This is a project from The Odin Project's JavaScript course where we make the game Battleship using TDD with Jest as the testing framework.",
   "main": "index.js",
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "build": "webpack",
+    "dev": "webpack serve",
+    "deploy": "git subtree push --prefix dist origin gh-pages"
   },
   "repository": {
     "type": "git",
@@ -20,6 +23,12 @@
     "@babel/core": "^7.26.10",
     "@babel/preset-env": "^7.26.9",
     "babel-jest": "^29.7.0",
-    "jest": "^29.7.0"
+    "css-loader": "^7.1.2",
+    "html-webpack-plugin": "^5.6.3",
+    "jest": "^29.7.0",
+    "style-loader": "^4.0.0",
+    "webpack": "^5.98.0",
+    "webpack-cli": "^6.0.1",
+    "webpack-dev-server": "^5.2.0"
   }
 }
