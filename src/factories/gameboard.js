@@ -24,6 +24,7 @@ const gameboardFactory = () => {
         if (vertical && (y + (size - 1)) > 9) throw new Error("Out of bounds exception")
         if (!vertical && (x + (size - 1)) > 9) throw new Error("Out of bounds exception")
 
+        // TODO: check if any of the spots already have a ship there
         const ship = shipFactory(name, size)
         shipsLog.push(ship)
         for (let i = 0; i < size; i++) {

@@ -8,9 +8,23 @@ body {
     padding: 0;
 }
 
+h1 {
+    text-align: center;
+}
+
+h1+div {
+    text-align: center;
+}
+
+.player1,
+.player2 {
+    margin: 0 10%;
+}
+
 .targetboard,
 .gameboard {
     margin: 10px;
+    justify-self: center;
 }
 
 .targetboard > div,
@@ -18,7 +32,8 @@ body {
     border: 1px solid #000000;
     border-bottom: none;
     display: grid;
-    grid-template-columns: repeat(11, 1fr);
+    grid-template-columns: repeat(11, 40px);
+    grid-template-rows: 40px;
 }
 
 .targetboard > div:last-of-type,
@@ -29,11 +44,17 @@ body {
 .targetboard > div > div,
 .gameboard > div > div {
     border-right: 1px solid #000000;
+    text-align: center;
+    align-content: center;
 }
 
 .targetboard > div > div:last-of-type,
 .gameboard > div > div:last-of-type {
     border-right: none;
+}
+
+.ship {
+    background-color: darkcyan;
 }
 
 .hide {
