@@ -1,0 +1,4 @@
+const bindEvents = () => {}
+
+
+export { bindEvents }
