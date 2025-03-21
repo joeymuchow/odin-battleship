@@ -1,4 +1,4 @@
-import gameboardFactory from "../src/js/gameboard"
+import gameboardFactory from "../src/factories/gameboard"
 
 describe("General gameboard tests", () => {
     test("Gameboard exists", () => {

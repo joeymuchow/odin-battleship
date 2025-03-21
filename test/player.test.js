@@ -1,4 +1,4 @@
-import playerFactory from "../src/js/player"
+import playerFactory from "../src/factories/player"
 
 describe("Player factory tests", () => {
     test("Create real player", () => {
