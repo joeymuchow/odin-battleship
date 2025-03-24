@@ -10,12 +10,20 @@ const renderPage = () => {
     startGame.textContent = "Start Game"
     buttonContainer.append(startGame)
 
+    const turnContainer = document.createElement("div")
+    turnContainer.classList.add("turn-container")
+    const turnLabel = document.createElement("p")
+    turnLabel.textContent = "Turn: "
+    const turn = document.createElement("p")
+    turn.classList.add("turn")
+    turnContainer.append(turnLabel, turn)
+
     const player1Container = renderPlayerContainer("player1")
     player1Container.classList.add("hide")
     const player2Container = renderPlayerContainer("player2")
     player2Container.classList.add("hide")
 
-    body.append(title, buttonContainer, player1Container, player2Container)
+    body.append(title, buttonContainer, turnContainer, player1Container, player2Container)
 }
 
 const renderPlayerContainer = (containerClass) => {
