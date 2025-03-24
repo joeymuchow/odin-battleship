@@ -18,12 +18,15 @@ const renderPage = () => {
     turn.classList.add("turn")
     turnContainer.append(turnLabel, turn)
 
+    const message = document.createElement("p")
+    message.classList.add("message")
+
     const player1Container = renderPlayerContainer("player1")
     player1Container.classList.add("hide")
     const player2Container = renderPlayerContainer("player2")
     player2Container.classList.add("hide")
 
-    body.append(title, buttonContainer, turnContainer, player1Container, player2Container)
+    body.append(title, buttonContainer, turnContainer, message, player1Container, player2Container)
 }
 
 const renderPlayerContainer = (containerClass) => {
@@ -40,7 +43,7 @@ const renderPlayerContainer = (containerClass) => {
     targetboard.classList.add("targetboard")
 
     const gameboardLabel = document.createElement("p")
-    gameboardLabel.textContent = "My ships"
+    gameboardLabel.textContent = "Your ships"
     const gameboard = document.createElement("div")
     gameboard.classList.add("gameboard")
 
@@ -96,4 +99,23 @@ const renderShips = (player, isPlayer1) => {
     }
 }
 
-export { renderPage, renderShips }
+const renderShot = (coordinate, isPlayer1, board, result) => {
+    const playerNum = isPlayer1 ? 1 : 2
+    const cell = document.querySelector(`.player${playerNum} .${board} .${coordinate}`)
+
+    const marker = document.createElement("div")
+    marker.classList.add("marker", result)
+
+    cell.append(marker)
+}
+
+const renderResultMessage = (currentPlayer, targetPlayer, result) => {
+    const message = document.querySelector(".message")
+    if (result.result === "hit") {
+        message.textContent = `${currentPlayer} hits ${targetPlayer}'s ${result.ship}!`
+    } else {
+        message.textContent = `${currentPlayer} misses!`
+    }
+}
+
+export { renderPage, renderShips, renderShot, renderResultMessage }

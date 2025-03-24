@@ -1,5 +1,5 @@
 import playerFactory from "./factories/player"
-import { renderShips } from "./render"
+import { renderShips, renderShot, renderResultMessage } from "./render"
 
 const startGame = () => {
     const name1 = prompt("Please enter your name player 1") || "player1"
@@ -49,7 +49,7 @@ const startGame = () => {
 
     gameState.player1 = player1
     gameState.player2 = player2
-    gameState.turn = player1.name
+    gameState.turn = "player1"
 }
 
 const gameState = {
@@ -60,44 +60,52 @@ const gameState = {
 }
 
 const playTurn = (e) => {
+    if (gameState.winner) return
     if (e.target.classList.contains("label")) return
+    // if target has marker already, that space is invalid to guess again
+    if (e.target.classList.contains("marker")) return
+    if (e.target.children.length !== 0) return
 
     // div with class .player1 or .player2
     const playerContainer = e.target.parentElement.parentElement.parentElement.parentElement
     
     if (playerContainer.classList.contains(gameState.turn)) {
         const currentPlayer = playerContainer.classList[0]
+        const shootingPlayer = currentPlayer === "player1" ? gameState.player1 : gameState.player2
         const targetPlayer = currentPlayer === "player1" ? gameState.player2 : gameState.player1
-        console.log(playerContainer.classList)
-        console.log(gameState[currentPlayer])
-        console.log(e.target)
 
         const letterMap = {
-            A: 1,
-            B: 2,
-            C: 3,
-            D: 4,
-            E: 5,
-            F: 6,
-            G: 7,
-            H: 8,
-            I: 9,
-            J: 10,
+            A: 0,
+            B: 1,
+            C: 2,
+            D: 3,
+            E: 4,
+            F: 5,
+            G: 6,
+            H: 7,
+            I: 8,
+            J: 9,
         }
-        const coordinates = e.target.classList[0].split("")
+        const uiCoordinate = e.target.classList[0]
+        const coordinates = uiCoordinate.split("")
         const x = Number(letterMap[coordinates[0]])
-        const y = Number(coordinates[1])
+        const y = Number(coordinates[1]) - 1
+        // TODO: need to know that a ship has sunk
+        // result has hit or miss and ship that was hit's name
         const result = targetPlayer.gameboard.receiveAttack(x, y)
 
-        // show result message? for either hit or miss
-        // also show what type of ship was hit
-        console.log(result)
+        renderResultMessage(shootingPlayer.name, targetPlayer.name, result)
 
+        const isPlayer1 = currentPlayer === "player1"
         // update targetboard with hit/miss info
-        // red = hit, white = miss, maybe should change bg color of game
+        renderShot(uiCoordinate, isPlayer1, "targetboard", result.result)
 
         // update opposing player's gameboard with hit/miss info
-        // red = hit, white = miss
+        renderShot(uiCoordinate, !isPlayer1, "gameboard", result.result)
+
+        // change turn
+        gameState.turn = currentPlayer === "player1" ? "player2" : "player1"
+        document.querySelector(".turn").textContent = targetPlayer.name
     }
     
 }

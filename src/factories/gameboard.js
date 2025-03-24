@@ -39,6 +39,10 @@ const gameboardFactory = () => {
     const receiveAttack = (x, y) => {
         if (x > board.length - 1 || y > board.length - 1) throw new Error("Out of bounds exception")
 
+        const result = {
+            result: null,
+            ship: null,
+        }
         if (board[y][x].length) {
             const name = board[y][x]
             const hitShip = shipsLog.filter((ship) => {
@@ -47,11 +51,14 @@ const gameboardFactory = () => {
 
             hitShip[0].hit()
             shots.hits.push({x, y})
-            return "hit"
+            result.result = "hit"
+            result.ship = name
         } else {
             shots.misses.push({x, y})
-            return "miss"
+            result.result = "miss"
         }
+
+        return result
     }
 
     const allShipsSunk = () => {

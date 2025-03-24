@@ -74,7 +74,7 @@ describe("Shots at ships tests", () => {
         gameboard.placeShip("ship", 1, 0, 0)
         const result = gameboard.receiveAttack(0, 0)
     
-        expect(result).toBe("hit")
+        expect(result.result).toBe("hit")
         expect(gameboard.shots.hits).toContainEqual({x: 0, y: 0})
     })
 
@@ -82,7 +82,7 @@ describe("Shots at ships tests", () => {
         gameboard.placeShip("ship", 2, 0, 0)
         const result = gameboard.receiveAttack(1, 0)
     
-        expect(result).toBe("hit")
+        expect(result.result).toBe("hit")
         expect(gameboard.shots.hits).toContainEqual({x: 1, y: 0})
     })
     
@@ -90,8 +90,24 @@ describe("Shots at ships tests", () => {
         gameboard.placeShip("ship", 1, 1, 0)
         const result = gameboard.receiveAttack(0, 0)
     
-        expect(result).toBe("miss")
+        expect(result.result).toBe("miss")
         expect(gameboard.shots.misses).toContainEqual({x: 0, y: 0})
+    })
+
+    test("Fire at 0,0 and hit Carrier", () => {
+        gameboard.placeShip("Carrier", 5, 0, 0)
+        const result = gameboard.receiveAttack(1, 0)
+    
+        expect(result.result).toBe("hit")
+        expect(result.ship).toBe("Carrier")
+    })
+
+    test("Fire at 0,0 and miss, ship is null", () => { 
+        gameboard.placeShip("ship", 1, 1, 0)
+        const result = gameboard.receiveAttack(0, 0)
+    
+        expect(result.result).toBe("miss")
+        expect(result.ship).toBeNull()
     })
 
     test("Fire at 10,0 and receive error", () => {

@@ -2,7 +2,10 @@ import { startGame, playTurn } from "./game"
 
 const bindEvents = () => {
     document.querySelector(".start-game").addEventListener("click", startGame)
-    document.querySelector(".targetboard").addEventListener("click", playTurn)
+    const targetboards = document.querySelectorAll(".targetboard")
+    for (const board of targetboards) {
+        board.addEventListener("click", playTurn)
+    }
 }
 
 

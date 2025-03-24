@@ -1,3 +1,11 @@
+:root {
+    /* CSS HEX */
+    --snow: #FFFCFF;
+    --slate-gray: #7286A0;
+    --gunmetal: #2B303A;
+    --red-pantone: #e71d36ff;
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -6,6 +14,8 @@
 body {
     margin: 0;
     padding: 0;
+    background-color: var(--gunmetal);
+    color: var(--snow);
 }
 
 h1, h1+div {
@@ -16,6 +26,10 @@ h1, h1+div {
 .turn-container {
     display: flex;
     justify-content: center;
+}
+
+.message {
+    text-align: center;
 }
 
 .player1,
@@ -31,7 +45,7 @@ h1, h1+div {
 
 .targetboard > div,
 .gameboard > div {
-    border: 1px solid #000000;
+    border: 1px solid var(--snow);
     border-bottom: none;
     display: grid;
     grid-template-columns: repeat(11, 40px);
@@ -40,12 +54,12 @@ h1, h1+div {
 
 .targetboard > div:last-of-type,
 .gameboard > div:last-of-type {
-    border-bottom: 1px solid #000000;
+    border-bottom: 1px solid var(--snow);
 }
 
 .targetboard > div > div,
 .gameboard > div > div {
-    border-right: 1px solid #000000;
+    border-right: 1px solid var(--snow);
     text-align: center;
     align-content: center;
 }
@@ -55,8 +69,34 @@ h1, h1+div {
     border-right: none;
 }
 
+.targetboard > div > div {
+    cursor: pointer;
+}
+
+.targetboard > div > div.label {
+    cursor: initial;
+}
+
 .ship {
-    background-color: darkcyan;
+    background-color: var(--slate-gray);
+}
+
+.marker {
+    width: 50%;
+    height: 50%;
+    border: 1px solid;
+    border-radius: 10px;
+    justify-self: center;
+}
+
+.marker.hit {
+    border-color: var(--red-pantone);
+    background-color: var(--red-pantone);
+}
+
+.marker.miss {
+    border-color: var(--snow);
+    background-color: var(--snow);
 }
 
 .hide {
