@@ -53,6 +53,7 @@ const gameboardFactory = () => {
             shots.hits.push({x, y})
             result.result = "hit"
             result.ship = name
+            result.sunk = hitShip[0].isSunk()
         } else {
             shots.misses.push({x, y})
             result.result = "miss"

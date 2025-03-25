@@ -83,6 +83,21 @@ const renderGrid = (board) => {
     return board
 }
 
+const clearGrids = () => {
+    const targetCells = document.querySelectorAll(".targetboard div div")
+    const gameCells = document.querySelectorAll(".gameboard div div")
+    for (const cell of targetCells) {
+        if (!cell.classList.contains("label")) {
+            cell.replaceChildren()
+        }
+    }
+    for (const cell of gameCells) {
+        if (!cell.classList.contains("label")) {
+            cell.replaceChildren()
+        }
+    }
+}
+
 const renderShips = (player, isPlayer1) => {
     const playerNum = isPlayer1 ? 1 : 2
     const gameboard = document.querySelector(`.player${playerNum} .gameboard`)
@@ -109,13 +124,17 @@ const renderShot = (coordinate, isPlayer1, board, result) => {
     cell.append(marker)
 }
 
-const renderResultMessage = (currentPlayer, targetPlayer, result) => {
+const renderResultMessage = (currentPlayer, targetPlayer, result, winner) => {
     const message = document.querySelector(".message")
-    if (result.result === "hit") {
+    if (winner) {
+        message.textContent = `${currentPlayer} wins!`
+    } else if (result.sunk) {
+        message.textContent = `${currentPlayer} sunk ${targetPlayer}'s ${result.ship}!`
+    } else if (result.result === "hit") {
         message.textContent = `${currentPlayer} hits ${targetPlayer}'s ${result.ship}!`
     } else {
         message.textContent = `${currentPlayer} misses!`
     }
 }
 
-export { renderPage, renderShips, renderShot, renderResultMessage }
+export { renderPage, renderShips, renderShot, renderResultMessage, clearGrids }

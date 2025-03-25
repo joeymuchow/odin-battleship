@@ -1,7 +1,10 @@
 import playerFactory from "./factories/player"
-import { renderShips, renderShot, renderResultMessage } from "./render"
+import { renderShips, renderShot, renderResultMessage, clearGrids } from "./render"
 
 const startGame = () => {
+    clearGrids()
+    document.querySelector(".message").textContent = ""
+    gameState.winner = null
     const name1 = prompt("Please enter your name player 1") || "player1"
     const name2 = prompt("Please enter your name player 2") || "player2"
 
@@ -11,8 +14,9 @@ const startGame = () => {
     document.querySelector(".player1 h3").textContent = name1
     document.querySelector(".player2 h3").textContent = name2
 
-    document.querySelector(".player1").classList.toggle("hide")
-    document.querySelector(".player2").classList.toggle("hide")
+    document.querySelector(".player1").classList.remove("hide")
+    document.querySelector(".player2").classList.remove("hide")
+    document.querySelector(".start-game").classList.add("hide")
 
     const ships = [
         {
@@ -90,11 +94,8 @@ const playTurn = (e) => {
         const coordinates = uiCoordinate.split("")
         const x = Number(letterMap[coordinates[0]])
         const y = Number(coordinates[1]) - 1
-        // TODO: need to know that a ship has sunk
         // result has hit or miss and ship that was hit's name
         const result = targetPlayer.gameboard.receiveAttack(x, y)
-
-        renderResultMessage(shootingPlayer.name, targetPlayer.name, result)
 
         const isPlayer1 = currentPlayer === "player1"
         // update targetboard with hit/miss info
@@ -103,9 +104,16 @@ const playTurn = (e) => {
         // update opposing player's gameboard with hit/miss info
         renderShot(uiCoordinate, !isPlayer1, "gameboard", result.result)
 
-        // change turn
-        gameState.turn = currentPlayer === "player1" ? "player2" : "player1"
-        document.querySelector(".turn").textContent = targetPlayer.name
+        if (targetPlayer.gameboard.allShipsSunk()) {
+            document.querySelector(".start-game").classList.remove("hide")
+            gameState.winner = shootingPlayer.name
+        } else {
+            // change turn
+            gameState.turn = currentPlayer === "player1" ? "player2" : "player1"
+            document.querySelector(".turn").textContent = targetPlayer.name
+        }
+
+        renderResultMessage(shootingPlayer.name, targetPlayer.name, result, gameState.winner)
     }
     
 }
