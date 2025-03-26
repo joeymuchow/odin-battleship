@@ -158,19 +158,21 @@ const playTurn = (e) => {
     }
 
     const createShotCoordinates = (shots) => {
-        const shot = {x: null, y: null}
-        for (let i = 0; i < 10; i++) {
-            for (let j = 0; j < 10; j++) {
-                const duplicateShotHit = shots.hits.findIndex((element) => element.x === j && element.y === i)
-                const duplicateShotMiss = shots.misses.findIndex((element) => element.x === j && element.y === i)
+        const shot = { x: null, y: null }
 
-                if (duplicateShotHit < 0 && duplicateShotMiss < 0) {
-                    shot.x = j
-                    shot.y = i
-                    return shot
-                }
+        while(shot.x === null) {
+            const randomX = Math.floor(Math.random() * 10)
+            const randomY = Math.floor(Math.random() * 10)
+            const duplicateShotHit = shots.hits.findIndex((element) => element.x === randomX && element.y === randomY)
+            const duplicateShotMiss = shots.misses.findIndex((element) => element.x === randomX && element.y === randomY)
+
+            if (duplicateShotHit < 0 && duplicateShotMiss < 0) {
+                shot.x = randomX
+                shot.y = randomY
             }
         }
+
+        return shot      
     }
     
 }
