@@ -21,8 +21,6 @@ describe("Place ship tests", () => {
 
     test("Place ship on gameboard", () => {
         // create ship and place it at 0,0
-        // or should the x,y coordinates here be 1,1 and then inside place ship will translate it to 0,0
-        // eventually with a ui we will have coordinates like B2
         gameboard.placeShip("ship", 1, 0, 0)
     
         expect(gameboard.board[0][0]).toBe("ship")
@@ -36,7 +34,8 @@ describe("Place ship tests", () => {
     })
     
     test("Place a size 3 ship on gameboard going out of bounds", () => {
-        expect(() => gameboard.placeShip("ship", 3, 9, 9)).toThrow(Error)
+        const result = gameboard.placeShip("ship", 3, 9, 9)
+        expect(result.error).toBe("Ship would go off the board. Please try again.")
     })
     
     test("Place a size 1 ship on gameboard bottom right", () => {
@@ -52,7 +51,8 @@ describe("Place ship tests", () => {
     })
     
     test("Place a size 3 ship vertically on gameboard going out of bounds", () => {
-        expect(() => gameboard.placeShip("ship", 3, 9, 9, true)).toThrow(Error)
+        const result = gameboard.placeShip("ship", 3, 9, 9, true)
+        expect(result.error).toBe("Ship would go off the board. Please try again.")
     })
     
     test("Place a size 2 ship on gameboard vertically", () => {
@@ -60,6 +60,20 @@ describe("Place ship tests", () => {
     
         expect(gameboard.board[0][0]).toBe("ship")
         expect(gameboard.board[1][0]).toBe("ship")
+    })
+
+    test("Place ship on another ship", () => {
+        gameboard.placeShip("ship", 2, 0, 0)
+
+        const result = gameboard.placeShip("ship2", 3, 0, 0)
+        expect(result.error).toBe("Place taken by another ship. Please try again.")
+    })
+
+    test("Ship edge is already taken", () => {
+        gameboard.placeShip("ship", 2, 8, 9)
+
+        const result = gameboard.placeShip("ship2", 3, 9, 7, true)
+        expect(result.error).toBe("Place taken by another ship. Please try again.")
     })
 })
 
@@ -112,12 +126,12 @@ describe("Shots at ships tests", () => {
 
     test("Fire at 10,0 and receive error", () => {
         gameboard.placeShip("ship", 1, 0, 0)
-        expect(() => gameboard.receiveAttack(10, 0)).toThrow(Error)
+        expect(() => gameboard.receiveAttack(10, 0)).toThrow("Out of bounds exception")
     })
 
     test("Fire at 0,10 and receive error", () => {
         gameboard.placeShip("ship", 1, 0, 0)
-        expect(() => gameboard.receiveAttack(0, 10)).toThrow(Error)
+        expect(() => gameboard.receiveAttack(0, 10)).toThrow("Out of bounds exception")
     })
 })
 

@@ -21,10 +21,18 @@ const gameboardFactory = () => {
     }
 
     const placeShip = (name, size, x, y, vertical = false) => {
-        if (vertical && (y + (size - 1)) > 9) throw new Error("Out of bounds exception")
-        if (!vertical && (x + (size - 1)) > 9) throw new Error("Out of bounds exception")
+        if (vertical && (y + (size - 1)) > 9) return { error: "Ship would go off the board. Please try again." }
+        if (!vertical && (x + (size - 1)) > 9) return { error: "Ship would go off the board. Please try again." }
 
-        // TODO: check if any of the spots already have a ship there
+        // check if any places are already taken by another ship
+        for (let i = 0; i < size; i++) {
+            if (vertical) {
+                if (board[y + i][x].length > 0) return { error: "Place taken by another ship. Please try again." }
+            } else {
+                if (board[y][x + i].length > 0) return { error: "Place taken by another ship. Please try again." }
+            }
+        }
+
         const ship = shipFactory(name, size)
         shipsLog.push(ship)
         for (let i = 0; i < size; i++) {

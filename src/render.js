@@ -45,6 +45,8 @@ const renderPlayerContainer = (containerClass) => {
     const targetboard = document.createElement("div")
     targetboard.classList.add("targetboard")
 
+    const placeShipForm = createPlaceShipForm()
+
     const gameboardLabel = document.createElement("p")
     gameboardLabel.textContent = "Your ships"
     const gameboard = document.createElement("div")
@@ -53,7 +55,7 @@ const renderPlayerContainer = (containerClass) => {
     renderGrid(targetboard)
     renderGrid(gameboard)
 
-    gameboardContainer.append(targetLabel, targetboard, gameboardLabel, gameboard)
+    gameboardContainer.append(targetLabel, targetboard, placeShipForm, gameboardLabel, gameboard)
     playerContainer.append(name, gameboardContainer)
 
     return playerContainer
@@ -138,6 +140,47 @@ const renderResultMessage = (currentPlayer, targetPlayer, result, winner) => {
     } else {
         message.textContent = `${currentPlayer} misses!`
     }
+}
+
+const createPlaceShipForm = () => {
+    const form = document.createElement("form")
+    form.classList.add("place-ship-form")
+
+    const xLabel = document.createElement("label")
+    xLabel.setAttribute("for", "x-coordinate")
+    xLabel.textContent = "X coordinate"
+
+    const xSelect = document.createElement("select")
+    xSelect.id = "x-coordinate"
+    const letterArray = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"]
+    for (const letter of letterArray) {
+        const option = document.createElement("option")
+        option.textContent = letter
+        option.value = letter
+        xSelect.append(option)
+    }
+
+    const yLabel = document.createElement("label")
+    yLabel.setAttribute("for", "y-coordinate")
+    yLabel.textContent = "Y coordinate"
+
+    const ySelect = document.createElement("select")
+    ySelect.id = "y-coordinate"
+    for (let i = 1; i <= 10; i++) {
+        const option = document.createElement("option")
+        option.textContent = i
+        option.value = i
+        ySelect.append(option)
+    }
+
+    const button = document.createElement("button")
+    button.classList.add("submit-btn")
+    button.textContent = "Place ship"
+
+    form.append(xLabel, xSelect, yLabel, ySelect, button)
+    form.classList.add("hide")
+
+    return form
 }
 
 export { renderPage, renderShips, renderShot, renderResultMessage, clearGrids }
