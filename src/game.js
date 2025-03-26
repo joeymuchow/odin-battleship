@@ -1,15 +1,19 @@
 import playerFactory from "./factories/player"
 import { renderShips, renderShot, renderResultMessage, clearGrids } from "./render"
 
-const startGame = () => {
+const startGame = (e) => {
     clearGrids()
     document.querySelector(".message").textContent = ""
     gameState.winner = null
-    const name1 = prompt("Please enter your name player 1") || "player1"
-    const name2 = prompt("Please enter your name player 2") || "player2"
+    const vsComputer = e.target.classList.contains("play-computer")
+    const name1 = prompt("Please enter your name player 1") || "Player1"
+    let name2 = "Computer";
+    if (!vsComputer) {
+        name2 = prompt("Please enter your name player 2") || "Player2"
+    }
 
     const player1 = playerFactory(name1, false)
-    const player2 = playerFactory(name2, false)
+    const player2 = playerFactory(name2, vsComputer)
 
     document.querySelector(".player1 h3").textContent = name1
     document.querySelector(".player2 h3").textContent = name2
@@ -17,6 +21,7 @@ const startGame = () => {
     document.querySelector(".player1").classList.remove("hide")
     document.querySelector(".player2").classList.remove("hide")
     document.querySelector(".start-game").classList.add("hide")
+    document.querySelector(".play-computer").classList.add("hide")
 
     const ships = [
         {
@@ -91,9 +96,8 @@ const playTurn = (e) => {
             J: 9,
         }
         const uiCoordinate = e.target.classList[0]
-        const coordinates = uiCoordinate.split("")
-        const x = Number(letterMap[coordinates[0]])
-        const y = Number(coordinates[1]) - 1
+        const x = Number(letterMap[uiCoordinate.slice(0,1)])
+        const y = Number(uiCoordinate.slice(1)) - 1
         // result has hit or miss and ship that was hit's name
         const result = targetPlayer.gameboard.receiveAttack(x, y)
 
@@ -106,14 +110,67 @@ const playTurn = (e) => {
 
         if (targetPlayer.gameboard.allShipsSunk()) {
             document.querySelector(".start-game").classList.remove("hide")
+            document.querySelector(".play-computer").classList.remove("hide")
             gameState.winner = shootingPlayer.name
         } else {
             // change turn
             gameState.turn = currentPlayer === "player1" ? "player2" : "player1"
             document.querySelector(".turn").textContent = targetPlayer.name
+            if (targetPlayer.isComputer) {
+                setTimeout(() => {
+                    computerTurn()
+                }, 2000)
+            }
         }
 
         renderResultMessage(shootingPlayer.name, targetPlayer.name, result, gameState.winner)
+    }
+
+    const computerTurn = () => {
+        const player = gameState.player1
+        const computer = gameState.player2
+
+        const letterArray = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"]
+
+        // generate shot coordinates
+        const { x, y } = createShotCoordinates(player.gameboard.shots)
+        const uiCoordinate = letterArray[x] + (y + 1)
+
+        const result = player.gameboard.receiveAttack(x, y)
+
+        // update targetboard with hit/miss info
+        renderShot(uiCoordinate, false, "targetboard", result.result)
+
+        // update opposing player's gameboard with hit/miss info
+        renderShot(uiCoordinate, true, "gameboard", result.result)
+
+        if (player.gameboard.allShipsSunk()) {
+            document.querySelector(".start-game").classList.remove("hide")
+            document.querySelector(".play-computer").classList.remove("hide")
+            gameState.winner = computer.name
+        } else {
+            // change turn back to player
+            gameState.turn = "player1"
+            document.querySelector(".turn").textContent = player.name
+        }
+
+        renderResultMessage(computer.name, player.name, result, gameState.winner)
+    }
+
+    const createShotCoordinates = (shots) => {
+        const shot = {x: null, y: null}
+        for (let i = 0; i < 10; i++) {
+            for (let j = 0; j < 10; j++) {
+                const duplicateShotHit = shots.hits.findIndex((element) => element.x === j && element.y === i)
+                const duplicateShotMiss = shots.misses.findIndex((element) => element.x === j && element.y === i)
+
+                if (duplicateShotHit < 0 && duplicateShotMiss < 0) {
+                    shot.x = j
+                    shot.y = i
+                    return shot
+                }
+            }
+        }
     }
     
 }

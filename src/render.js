@@ -7,8 +7,11 @@ const renderPage = () => {
     const buttonContainer = document.createElement("div")
     const startGame = document.createElement("button")
     startGame.classList.add("start-game")
-    startGame.textContent = "Start Game"
-    buttonContainer.append(startGame)
+    startGame.textContent = "Start 2 Player Game"
+    const playComputer = document.createElement("button")
+    playComputer.classList.add("play-computer")
+    playComputer.textContent = "Start Game vs CPU"
+    buttonContainer.append(startGame, playComputer)
 
     const turnContainer = document.createElement("div")
     turnContainer.classList.add("turn-container")
