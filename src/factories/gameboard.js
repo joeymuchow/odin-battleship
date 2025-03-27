@@ -42,6 +42,8 @@ const gameboardFactory = () => {
                 board[y][x + i] = ship.name()
             }
         }
+
+        return { success: "Ship successfully placed" }
     }
 
     const receiveAttack = (x, y) => {

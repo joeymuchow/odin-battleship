@@ -18,10 +18,18 @@ const startGame = (e) => {
     document.querySelector(".player1 h3").textContent = name1
     document.querySelector(".player2 h3").textContent = name2
 
-    document.querySelector(".player1").classList.remove("hide")
-    document.querySelector(".player2").classList.remove("hide")
     document.querySelector(".start-game").classList.add("hide")
     document.querySelector(".play-computer").classList.add("hide")
+
+    document.querySelector(".turn").textContent = player1.name
+
+    document.querySelector(".player1").classList.remove("hide")
+    document.querySelector(".player1 .place-ship-form").classList.remove("hide")
+    // document.querySelector(".player2").classList.remove("hide")
+
+    // TODO: make it so here in start game the first player's gameboard is shown with place ships form visible
+    // The place ships form will have the user set coordinates for each ship in the ships array below
+    // Once all five ships have been placed, do the same thing for player 2 or randomly do it for cpu
 
     const ships = [
         {
@@ -46,15 +54,8 @@ const startGame = (e) => {
         },
     ]
 
-    for (let i = 0; i < ships.length; i++) {
-        player1.gameboard.placeShip(ships[i].name, ships[i].size, 0, i)
-        player2.gameboard.placeShip(ships[i].name, ships[i].size, 0, i)
-    }
-
-    renderShips(player1, true)
-    renderShips(player2, false)
-
-    document.querySelector(".turn").textContent = player1.name
+    player1.shipsToAdd = ships
+    player2.shipsToAdd = ships
 
     gameState.player1 = player1
     gameState.player2 = player2
@@ -125,56 +126,102 @@ const playTurn = (e) => {
 
         renderResultMessage(shootingPlayer.name, targetPlayer.name, result, gameState.winner)
     }
-
-    const computerTurn = () => {
-        const player = gameState.player1
-        const computer = gameState.player2
-
-        const letterArray = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"]
-
-        // generate shot coordinates
-        const { x, y } = createShotCoordinates(player.gameboard.shots)
-        const uiCoordinate = letterArray[x] + (y + 1)
-
-        const result = player.gameboard.receiveAttack(x, y)
-
-        // update targetboard with hit/miss info
-        renderShot(uiCoordinate, false, "targetboard", result.result)
-
-        // update opposing player's gameboard with hit/miss info
-        renderShot(uiCoordinate, true, "gameboard", result.result)
-
-        if (player.gameboard.allShipsSunk()) {
-            document.querySelector(".start-game").classList.remove("hide")
-            document.querySelector(".play-computer").classList.remove("hide")
-            gameState.winner = computer.name
-        } else {
-            // change turn back to player
-            gameState.turn = "player1"
-            document.querySelector(".turn").textContent = player.name
-        }
-
-        renderResultMessage(computer.name, player.name, result, gameState.winner)
-    }
-
-    const createShotCoordinates = (shots) => {
-        const shot = { x: null, y: null }
-
-        while(shot.x === null) {
-            const randomX = Math.floor(Math.random() * 10)
-            const randomY = Math.floor(Math.random() * 10)
-            const duplicateShotHit = shots.hits.findIndex((element) => element.x === randomX && element.y === randomY)
-            const duplicateShotMiss = shots.misses.findIndex((element) => element.x === randomX && element.y === randomY)
-
-            if (duplicateShotHit < 0 && duplicateShotMiss < 0) {
-                shot.x = randomX
-                shot.y = randomY
-            }
-        }
-
-        return shot      
-    }
-    
 }
 
-export { startGame, playTurn }
+const computerTurn = () => {
+    const player = gameState.player1
+    const computer = gameState.player2
+
+    const letterArray = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"]
+
+    // generate shot coordinates
+    const { x, y } = createShotCoordinates(player.gameboard.shots)
+    const uiCoordinate = letterArray[x] + (y + 1)
+
+    const result = player.gameboard.receiveAttack(x, y)
+
+    // update targetboard with hit/miss info
+    renderShot(uiCoordinate, false, "targetboard", result.result)
+
+    // update opposing player's gameboard with hit/miss info
+    renderShot(uiCoordinate, true, "gameboard", result.result)
+
+    if (player.gameboard.allShipsSunk()) {
+        document.querySelector(".start-game").classList.remove("hide")
+        document.querySelector(".play-computer").classList.remove("hide")
+        gameState.winner = computer.name
+    } else {
+        // change turn back to player
+        gameState.turn = "player1"
+        document.querySelector(".turn").textContent = player.name
+    }
+
+    renderResultMessage(computer.name, player.name, result, gameState.winner)
+}
+
+const createShotCoordinates = (shots) => {
+    const shot = { x: null, y: null }
+
+    while(shot.x === null) {
+        const randomX = Math.floor(Math.random() * 10)
+        const randomY = Math.floor(Math.random() * 10)
+        const duplicateShotHit = shots.hits.findIndex((element) => element.x === randomX && element.y === randomY)
+        const duplicateShotMiss = shots.misses.findIndex((element) => element.x === randomX && element.y === randomY)
+
+        if (duplicateShotHit < 0 && duplicateShotMiss < 0) {
+            shot.x = randomX
+            shot.y = randomY
+        }
+    }
+
+    return shot      
+}
+
+const placeShipUI = (e) => {
+    e.preventDefault()
+    console.log(e)
+    console.log(e.target.parentElement.parentElement.parentElement.classList[0])
+    const playerClass = e.target.parentElement.parentElement.parentElement.classList[0]
+    console.log(gameState[playerClass])
+    const player = gameState[playerClass]
+
+    const letterMap = {
+        A: 0,
+        B: 1,
+        C: 2,
+        D: 3,
+        E: 4,
+        F: 5,
+        G: 6,
+        H: 7,
+        I: 8,
+        J: 9,
+    }
+    const x = Number(letterMap[e.target.form[0].selectedOptions[0].value])
+    const y = Number(e.target.form[1].selectedOptions[0].value) - 1
+
+    console.log(e.target.form[0].selectedOptions[0].value)
+    console.log(e.target.form[1].selectedOptions[0].value)
+
+    const ship = player.shipsToAdd.pop()
+    const result = player.gameboard.placeShip(ship.name, ship.size, x, y)
+
+    if (result.success) {
+        const isPlayer1 = playerClass === "player1"
+        renderShips(player, isPlayer1)
+        if (player.shipsToAdd.length === 0) {
+            document.querySelector(`.${playerClass} .place-ship-form`).classList.add("hide")
+            if (isPlayer1) {
+                // TODO: check for if we need to place computer ships or show player2 board to place ships
+            } else {
+                // TODO: show first player boards to play a turn
+            }
+        }
+    } else {
+        player.shipsToAdd.push(ship)
+        document.querySelector(`.${playerClass} .error`).textContent = result.error
+    }
+
+}
+
+export { startGame, playTurn, placeShipUI }

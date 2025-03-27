@@ -42,8 +42,9 @@ const renderPlayerContainer = (containerClass) => {
 
     const targetLabel = document.createElement("p")
     targetLabel.textContent = "Opponent's ships"
+    targetLabel.classList.add("target-label", "hide")
     const targetboard = document.createElement("div")
-    targetboard.classList.add("targetboard")
+    targetboard.classList.add("targetboard", "hide")
 
     const placeShipForm = createPlaceShipForm()
 
@@ -173,11 +174,14 @@ const createPlaceShipForm = () => {
         ySelect.append(option)
     }
 
+    const error = document.createElement("p")
+    error.classList.add("error")
+
     const button = document.createElement("button")
     button.classList.add("submit-btn")
     button.textContent = "Place ship"
 
-    form.append(xLabel, xSelect, yLabel, ySelect, button)
+    form.append(xLabel, xSelect, yLabel, ySelect, error, button)
     form.classList.add("hide")
 
     return form
