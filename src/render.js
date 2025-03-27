@@ -174,6 +174,13 @@ const createPlaceShipForm = () => {
         ySelect.append(option)
     }
 
+    const verticalLabel = document.createElement("label")
+    verticalLabel.textContent = "Vertical?"
+    verticalLabel.setAttribute("for", "vertical-checkbox")
+    const verticalCheckbox = document.createElement("input")
+    verticalCheckbox.id = "vertical-checkbox"
+    verticalCheckbox.type = "checkbox"
+
     const error = document.createElement("p")
     error.classList.add("error")
 
@@ -181,7 +188,7 @@ const createPlaceShipForm = () => {
     button.classList.add("submit-btn")
     button.textContent = "Place ship"
 
-    form.append(xLabel, xSelect, yLabel, ySelect, error, button)
+    form.append(xLabel, xSelect, yLabel, ySelect, verticalLabel, verticalCheckbox, error, button)
     form.classList.add("hide")
 
     return form

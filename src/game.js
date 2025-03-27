@@ -179,10 +179,8 @@ const createShotCoordinates = (shots) => {
 
 const placeShipUI = (e) => {
     e.preventDefault()
-    console.log(e)
-    console.log(e.target.parentElement.parentElement.parentElement.classList[0])
+
     const playerClass = e.target.parentElement.parentElement.parentElement.classList[0]
-    console.log(gameState[playerClass])
     const player = gameState[playerClass]
 
     const letterMap = {
@@ -199,12 +197,10 @@ const placeShipUI = (e) => {
     }
     const x = Number(letterMap[e.target.form[0].selectedOptions[0].value])
     const y = Number(e.target.form[1].selectedOptions[0].value) - 1
-
-    console.log(e.target.form[0].selectedOptions[0].value)
-    console.log(e.target.form[1].selectedOptions[0].value)
+    const vertical = e.target.form[2].checked
 
     const ship = player.shipsToAdd.pop()
-    const result = player.gameboard.placeShip(ship.name, ship.size, x, y)
+    const result = player.gameboard.placeShip(ship.name, ship.size, x, y, vertical)
 
     if (result.success) {
         const isPlayer1 = playerClass === "player1"
