@@ -1,8 +1,8 @@
-import { startGame, playTurn, placeShipUI } from "./game"
+import { setupGame, playTurn, placeShipUI, changeTurn } from "./game"
 
 const bindEvents = () => {
-    document.querySelector(".start-game").addEventListener("click", startGame)
-    document.querySelector(".play-computer").addEventListener("click", startGame)
+    document.querySelector(".play-game").addEventListener("click", setupGame)
+    document.querySelector(".play-computer").addEventListener("click", setupGame)
     const targetboards = document.querySelectorAll(".targetboard")
     for (const board of targetboards) {
         board.addEventListener("click", playTurn)
@@ -13,13 +13,12 @@ const bindEvents = () => {
     document.querySelector(".player1 #y-coordinate").addEventListener("change", resetError)
     document.querySelector(".player2 #x-coordinate").addEventListener("change", resetError)
     document.querySelector(".player2 #y-coordinate").addEventListener("change", resetError)
+    document.querySelector(".start-turn").addEventListener("click", changeTurn)
 }
 
 const resetError = (e) => {
     const playerClass = e.target.parentElement.parentElement.parentElement.classList[0]
     document.querySelector(`.${playerClass} .error`).textContent = ""
 }
-
-
 
 export { bindEvents }

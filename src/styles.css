@@ -16,6 +16,7 @@ body {
     padding: 0;
     background-color: var(--gunmetal);
     color: var(--snow);
+    font-size: 16px;
 }
 
 h1, h1+div {
@@ -34,9 +35,14 @@ h1+div button {
     cursor: pointer;
 }
 
+h3 {
+    font-size: 1.4rem;
+}
+
 .turn-container {
     display: flex;
     justify-content: center;
+    font-size: 1.2rem;
 }
 
 .message {
@@ -46,6 +52,11 @@ h1+div button {
 .player1,
 .player2 {
     margin: 0 10%;
+}
+
+.player1 p,
+.player2 p {
+    font-size: 1.2rem;
 }
 
 .targetboard,
@@ -84,8 +95,16 @@ h1+div button {
     cursor: pointer;
 }
 
+.targetboard > div > div:hover {
+    background-color: var(--red-pantone);
+}
+
 .targetboard > div > div.label {
     cursor: initial;
+}
+
+.targetboard > div > div.label:hover {
+    background-color: var(--gunmetal);
 }
 
 .ship {
@@ -111,8 +130,44 @@ h1+div button {
 }
 
 .place-ship-form {
-    display: flex;
+    display: grid;
     justify-content: center;
+    grid-template-columns: max-content max-content;
+    grid-template-rows: 1fr 1fr;
+    gap: 15px 10px;
+    text-align: right;
+}
+
+p.error {
+    grid-column: span 2;
+}
+
+button.submit-btn {
+    grid-column: span 2;
+    cursor: pointer;
+}
+
+.change-turn-modal {
+    justify-self: center;
+    align-self: end;
+    height: 90%;
+    width: 60%;
+    text-align: center;
+    align-content: center;
+    background-color: var(--slate-gray);
+    color: var(--snow);
+    font-size: 20px;
+}
+
+.change-turn-modal button {
+    color: var(--snow);
+    background-color: var(--gunmetal);
+    padding: 8px 16px;
+    cursor: pointer;
+}
+
+.turn-message {
+    margin-bottom: 20px;
 }
 
 .hide {

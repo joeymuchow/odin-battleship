@@ -1,10 +1,14 @@
 import playerFactory from "./factories/player"
 import { renderShips, renderShot, renderResultMessage, clearGrids } from "./render"
 
-const startGame = (e) => {
+const setupGame = (e) => {
     clearGrids()
     document.querySelector(".message").textContent = ""
     gameState.winner = null
+    document.querySelector(".player1 .targetboard").classList.add("hide")
+    document.querySelector(".player1 .target-label").classList.add("hide")
+    document.querySelector(".player2 .targetboard").classList.add("hide")
+    document.querySelector(".player2 .target-label").classList.add("hide")
     const vsComputer = e.target.classList.contains("play-computer")
     const name1 = prompt("Please enter your name player 1") || "Player1"
     let name2 = "Computer";
@@ -18,14 +22,13 @@ const startGame = (e) => {
     document.querySelector(".player1 h3").textContent = name1
     document.querySelector(".player2 h3").textContent = name2
 
-    document.querySelector(".start-game").classList.add("hide")
+    document.querySelector(".play-game").classList.add("hide")
     document.querySelector(".play-computer").classList.add("hide")
 
     document.querySelector(".turn").textContent = player1.name
 
     document.querySelector(".player1").classList.remove("hide")
     document.querySelector(".player1 .place-ship-form").classList.remove("hide")
-    // document.querySelector(".player2").classList.remove("hide")
 
     // TODO: make it so here in start game the first player's gameboard is shown with place ships form visible
     // The place ships form will have the user set coordinates for each ship in the ships array below
@@ -54,12 +57,14 @@ const startGame = (e) => {
         },
     ]
 
-    player1.shipsToAdd = ships
-    player2.shipsToAdd = ships
+    player1.shipsToAdd = [...ships]
+    player2.shipsToAdd = [...ships]
 
     gameState.player1 = player1
     gameState.player2 = player2
     gameState.turn = "player1"
+
+    document.querySelector(".message").textContent = `${gameState.player1.name}, please place your ships`
 }
 
 const gameState = {
@@ -110,7 +115,7 @@ const playTurn = (e) => {
         renderShot(uiCoordinate, !isPlayer1, "gameboard", result.result)
 
         if (targetPlayer.gameboard.allShipsSunk()) {
-            document.querySelector(".start-game").classList.remove("hide")
+            document.querySelector(".play-game").classList.remove("hide")
             document.querySelector(".play-computer").classList.remove("hide")
             gameState.winner = shootingPlayer.name
         } else {
@@ -121,6 +126,11 @@ const playTurn = (e) => {
                 setTimeout(() => {
                     computerTurn()
                 }, 2000)
+            } else {
+                setTimeout(() => {
+                    document.querySelector(".change-turn-modal .turn-message").textContent = `It is ${gameState[gameState.turn].name}'s turn. When you are ready ${gameState[gameState.turn].name}, click 'Start turn'`
+                    document.querySelector(".change-turn-modal").showModal()
+                }, 1000)
             }
         }
 
@@ -147,7 +157,7 @@ const computerTurn = () => {
     renderShot(uiCoordinate, true, "gameboard", result.result)
 
     if (player.gameboard.allShipsSunk()) {
-        document.querySelector(".start-game").classList.remove("hide")
+        document.querySelector(".play-game").classList.remove("hide")
         document.querySelector(".play-computer").classList.remove("hide")
         gameState.winner = computer.name
     } else {
@@ -179,6 +189,7 @@ const createShotCoordinates = (shots) => {
 
 const placeShipUI = (e) => {
     e.preventDefault()
+    document.querySelector(".turn-container").classList.add("hide")
 
     const playerClass = e.target.parentElement.parentElement.parentElement.classList[0]
     const player = gameState[playerClass]
@@ -209,8 +220,18 @@ const placeShipUI = (e) => {
             document.querySelector(`.${playerClass} .place-ship-form`).classList.add("hide")
             if (isPlayer1) {
                 // TODO: check for if we need to place computer ships or show player2 board to place ships
+                if (gameState.player2.isComputer) {
+                    // place computer ships randomly
+                    startGame()
+                } else {
+                    document.querySelector(".message").textContent = `${gameState.player2.name}, please place your ships`
+                    document.querySelector(".player1").classList.add("hide")
+                    // show player 2 gameboard and place ships form
+                    document.querySelector(".player2").classList.remove("hide")
+                    document.querySelector(".player2 .place-ship-form").classList.remove("hide")
+                }
             } else {
-                // TODO: show first player boards to play a turn
+                startGame()
             }
         }
     } else {
@@ -220,4 +241,31 @@ const placeShipUI = (e) => {
 
 }
 
-export { startGame, playTurn, placeShipUI }
+const startGame = () => {
+    document.querySelector(".message").textContent = ""
+    document.querySelector(".turn-container").classList.remove("hide")
+    if (gameState.player2.isComputer) {
+        // no need to show player 2 board or the change turn modal
+        document.querySelector(".player1").classList.remove("hide")
+        document.querySelector(".player1 .targetboard").classList.remove("hide")
+        document.querySelector(".player1 .target-label").classList.remove("hide")
+        document.querySelector(".player2").classList.add("hide")
+    } else {
+        document.querySelector(".change-turn-modal .turn-message").textContent = `It is ${gameState[gameState.turn].name}'s turn. When you are ready ${gameState[gameState.turn].name}, click 'Start turn'`
+        document.querySelector(".change-turn-modal").showModal()
+    }
+}
+
+const changeTurn = (e) => {
+    const playerClass = gameState.turn
+    const otherPlayerClass = playerClass === "player1" ? "player2" : "player1"
+
+    document.querySelector(`.${playerClass}`).classList.remove("hide")
+    document.querySelector(`.${playerClass} .targetboard`).classList.remove("hide")
+    document.querySelector(`.${playerClass} .target-label`).classList.remove("hide")
+    document.querySelector(`.${otherPlayerClass}`).classList.add("hide")
+
+    document.querySelector(".change-turn-modal").close()
+}
+
+export { setupGame, playTurn, placeShipUI, changeTurn }

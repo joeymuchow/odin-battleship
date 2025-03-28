@@ -5,16 +5,16 @@ const renderPage = () => {
     title.textContent = "Battleship"
 
     const buttonContainer = document.createElement("div")
-    const startGame = document.createElement("button")
-    startGame.classList.add("start-game")
-    startGame.textContent = "Start 2 Player Game"
+    const setupGame = document.createElement("button")
+    setupGame.classList.add("play-game")
+    setupGame.textContent = "Start 2 Player Game"
     const playComputer = document.createElement("button")
     playComputer.classList.add("play-computer")
     playComputer.textContent = "Start Game vs CPU"
-    buttonContainer.append(startGame, playComputer)
+    buttonContainer.append(setupGame, playComputer)
 
     const turnContainer = document.createElement("div")
-    turnContainer.classList.add("turn-container")
+    turnContainer.classList.add("turn-container", "hide")
     const turnLabel = document.createElement("p")
     turnLabel.textContent = "Turn: "
     const turn = document.createElement("p")
@@ -24,12 +24,14 @@ const renderPage = () => {
     const message = document.createElement("p")
     message.classList.add("message")
 
+    const modal = changeTurnModal()
+
     const player1Container = renderPlayerContainer("player1")
     player1Container.classList.add("hide")
     const player2Container = renderPlayerContainer("player2")
     player2Container.classList.add("hide")
 
-    body.append(title, buttonContainer, turnContainer, message, player1Container, player2Container)
+    body.append(title, buttonContainer, turnContainer, message, modal, player1Container, player2Container)
 }
 
 const renderPlayerContainer = (containerClass) => {
@@ -95,11 +97,13 @@ const clearGrids = () => {
     for (const cell of targetCells) {
         if (!cell.classList.contains("label")) {
             cell.replaceChildren()
+            cell.classList.remove("ship")
         }
     }
     for (const cell of gameCells) {
         if (!cell.classList.contains("label")) {
             cell.replaceChildren()
+            cell.classList.remove("ship")
         }
     }
 }
@@ -192,6 +196,23 @@ const createPlaceShipForm = () => {
     form.classList.add("hide")
 
     return form
+}
+
+const changeTurnModal = () => {
+    const modal = document.createElement("dialog")
+    modal.classList.add("change-turn-modal")
+
+    const message = document.createElement("p")
+    message.classList.add("turn-message")
+    message.textContent = ""
+
+    const button = document.createElement("button")
+    button.textContent = "Start turn"
+    button.classList.add("start-turn")
+
+    modal.append(message, button)
+
+    return modal
 }
 
 export { renderPage, renderShips, renderShot, renderResultMessage, clearGrids }
