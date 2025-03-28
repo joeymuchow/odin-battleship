@@ -30,10 +30,6 @@ const setupGame = (e) => {
     document.querySelector(".player1").classList.remove("hide")
     document.querySelector(".player1 .place-ship-form").classList.remove("hide")
 
-    // TODO: make it so here in start game the first player's gameboard is shown with place ships form visible
-    // The place ships form will have the user set coordinates for each ship in the ships array below
-    // Once all five ships have been placed, do the same thing for player 2 or randomly do it for cpu
-
     const ships = [
         {
             name: "Carrier",
@@ -125,7 +121,7 @@ const playTurn = (e) => {
             if (targetPlayer.isComputer) {
                 setTimeout(() => {
                     computerTurn()
-                }, 2000)
+                }, 3000)
             } else {
                 setTimeout(() => {
                     document.querySelector(".change-turn-modal .turn-message").textContent = `It is ${gameState[gameState.turn].name}'s turn. When you are ready ${gameState[gameState.turn].name}, click 'Start turn'`
@@ -219,9 +215,9 @@ const placeShipUI = (e) => {
         if (player.shipsToAdd.length === 0) {
             document.querySelector(`.${playerClass} .place-ship-form`).classList.add("hide")
             if (isPlayer1) {
-                // TODO: check for if we need to place computer ships or show player2 board to place ships
                 if (gameState.player2.isComputer) {
                     // place computer ships randomly
+                    placeShipsCPU()
                     startGame()
                 } else {
                     document.querySelector(".message").textContent = `${gameState.player2.name}, please place your ships`
@@ -237,6 +233,23 @@ const placeShipUI = (e) => {
     } else {
         player.shipsToAdd.push(ship)
         document.querySelector(`.${playerClass} .error`).textContent = result.error
+    }
+
+}
+
+const placeShipsCPU = () => {
+
+    while(gameState.player2.shipsToAdd.length > 0) {
+        const ship = gameState.player2.shipsToAdd.pop()
+        const vertical = Math.floor(Math.random() * 2) === 0
+        const randomX = Math.floor(Math.random() * 10)
+        const randomY = Math.floor(Math.random() * 10)
+
+        const result = gameState.player2.gameboard.placeShip(ship.name, ship.size, randomX, randomY, vertical)
+
+        if (result.error) {
+            gameState.player2.shipsToAdd.push(ship)
+        }
     }
 
 }
