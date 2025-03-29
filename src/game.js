@@ -121,7 +121,7 @@ const playTurn = (e) => {
             if (targetPlayer.isComputer) {
                 setTimeout(() => {
                     computerTurn()
-                }, 3000)
+                }, 2000)
             } else {
                 setTimeout(() => {
                     document.querySelector(".change-turn-modal .turn-message").textContent = `It is ${gameState[gameState.turn].name}'s turn. When you are ready ${gameState[gameState.turn].name}, click 'Start turn'`
@@ -168,15 +168,60 @@ const computerTurn = () => {
 const createShotCoordinates = (shots) => {
     const shot = { x: null, y: null }
 
-    while(shot.x === null) {
-        const randomX = Math.floor(Math.random() * 10)
-        const randomY = Math.floor(Math.random() * 10)
-        const duplicateShotHit = shots.hits.findIndex((element) => element.x === randomX && element.y === randomY)
-        const duplicateShotMiss = shots.misses.findIndex((element) => element.x === randomX && element.y === randomY)
+    const hitsCopy = [...shots.hits]
+    const sunkShips = hitsCopy.reduce((acc, current) => {
+        if (current.sunk) {
+            acc.push(current.ship)
+        }
+        return acc
+    }, [])
 
-        if (duplicateShotHit < 0 && duplicateShotMiss < 0) {
-            shot.x = randomX
-            shot.y = randomY
+    let validHits;
+
+    if (sunkShips.length) {
+        // Here we remove any shots that are on ships that have already sunk
+        // So the CPU will only target hits that matter
+        validHits = hitsCopy.filter((hit) => {
+            return !sunkShips.includes(hit.ship)
+        })
+    } else {
+        validHits = hitsCopy
+    }
+
+    while(shot.x === null) {
+        let duplicateShotHit
+        let duplicateShotMiss
+        if (validHits.length === 0) {
+            const randomX = Math.floor(Math.random() * 10)
+            const randomY = Math.floor(Math.random() * 10)
+
+            duplicateShotHit = shots.hits.findIndex((element) => element.x === randomX && element.y === randomY)
+            duplicateShotMiss = shots.misses.findIndex((element) => element.x === randomX && element.y === randomY)
+
+            if (duplicateShotHit < 0 && duplicateShotMiss < 0) {
+                shot.x = randomX
+                shot.y = randomY
+            }
+        } else {
+            const randomIndex = Math.floor(Math.random() * validHits.length)
+            const vertical = Math.floor(Math.random() * 2) === 0
+            // Randomly decide if we are adding one or subtracting one to either x or y
+            const negativeModifier = Math.floor(Math.random() * 2) === 0 ? -1 : 1
+            const xShot = validHits[randomIndex].x + ((!vertical ? 1 : 0) * negativeModifier)
+            const yShot = validHits[randomIndex].y + ((vertical ? 1 : 0) * negativeModifier)
+
+            // look for duplicate shots
+            duplicateShotHit = shots.hits.findIndex((element) => element.x === xShot && element.y === yShot)
+            duplicateShotMiss = shots.misses.findIndex((element) => element.x === xShot && element.y === yShot)
+
+            // Checking that the shot coordinates will fit on the board
+            const validXShot = xShot < gameState.player1.gameboard.board[0].length && xShot >= 0
+            const validYShot = yShot < gameState.player1.gameboard.board.length && yShot >= 0
+
+            if (duplicateShotHit < 0 && duplicateShotMiss < 0 && validXShot && validYShot) {
+                shot.x = xShot
+                shot.y = yShot
+            }
         }
     }
 

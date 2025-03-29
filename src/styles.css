@@ -132,7 +132,7 @@ h3 {
 .place-ship-form {
     display: grid;
     justify-content: center;
-    grid-template-columns: max-content max-content;
+    grid-template-columns: 150px 150px;
     grid-template-rows: 1fr 1fr;
     gap: 15px 10px;
     text-align: right;
@@ -140,6 +140,7 @@ h3 {
 
 p.error {
     grid-column: span 2;
+    text-align: left;
 }
 
 button.submit-btn {
